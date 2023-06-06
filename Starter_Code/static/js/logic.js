@@ -8,7 +8,7 @@ function markerSize(size) {
 }
 // create a function to determine the color of the circle based on the depth of the earthquake. 
 function colorScale(depth){
-    var colorRange= d3.scaleSequential().domain([0,10]).interpolator(d3.interpolateViridis);;
+    var colorRange= d3.scaleSequential().domain([0,50]).interpolator(d3.interpolateViridis);
     var colors=colorRange(depth);
     return colors;
 }
@@ -40,6 +40,8 @@ var map = L.map("map", {
  L.control.layers(baseMaps, overlayMaps, {
  collapsed: false
  }).addTo(map);
+
+
 }
 
 // create a function to store the features of each earthquake in the features array 
@@ -74,4 +76,16 @@ d3.json(url).then(function(data) {
     earthquakeFeatures(data.features);
 });
 
-   
+// add legend to show what the scale is for depth of the earthquake. 
+var legend2 = L.control({position: "bottomleft"});
+legend2.onAdd= function(){
+    var div = L.DomUtil.create("div", "legend");
+    const depth =[10,20,30,40,50]
+    for (var i=0; i< depth.length;i++) {
+        let color =colorScale(depth[i])
+        div.innerHTML = "<i style = 'background: "+ color+ "'></i>"+
+        depth[i]+(depth[i+1]? " - "+depth[i+1]+"<br>" : "+")}
+    
+    return div;
+}
+legend2.addTo(map);
